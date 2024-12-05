@@ -13,3 +13,27 @@ INSERT INTO pets (name, animal_type, breed, age, household_eircode) VALUES ('Pol
 INSERT INTO pets (name, animal_type, breed, age, household_eircode) VALUES ('Max', 'Dog', 'German Shepherd', 5, 'D01F5P2');
 INSERT INTO pets (name, animal_type, breed, age, household_eircode) VALUES ('Luna', 'Cat', 'Maine Coon', 3, 'D02G6Q3');
 INSERT INTO pets (name, animal_type, breed, age, household_eircode) VALUES ('Nibbles', 'Hamster', 'Syrian Hamster', 1, 'D01F5P2');
+
+-- Insert initial users into 'users' table
+-- User with ROLE_USER
+INSERT INTO users (username, password, role, locked, first_name, last_name, county)
+VALUES (
+           'user@example.com',
+           '$2y$10$WhVkC1O2NmahluiBHOGM6eKfYyXk9u1cN3sgqEbsNSF67DiBeQ8hO',
+           'ROLE_USER',
+           FALSE,
+           'John',
+           'Doe',
+           'Cork'
+       );
+-- User with ROLE_ADMIN
+INSERT INTO users (username, password, role, locked, first_name, last_name, county)
+VALUES (
+           'admin@example.com',
+           '$2y$10$WhVkC1O2NmahluiBHOGM6eKfYyXk9u1cN3sgqEbsNSF67DiBeQ8hO',
+           'ROLE_ADMIN',
+           FALSE,
+           'Jane',
+           'Smith',
+           'Kerry'
+       )
