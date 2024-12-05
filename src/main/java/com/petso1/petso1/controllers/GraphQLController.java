@@ -6,6 +6,8 @@ import com.petso1.petso1.entities.Statistics;
 import com.petso1.petso1.services.HouseholdService;
 import com.petso1.petso1.services.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
@@ -56,5 +58,31 @@ public class GraphQLController {
         stats.setEmptyHouseholds(householdService.getNumberOfEmptyHouses().intValue());
         stats.setFullHouseholds(householdService.getNumberOfFullHouses().intValue());
         return stats;
+    }
+
+    // Mutation: Create a new household
+    @MutationMapping
+    public Household createHousehold(@Argument("input") HouseholdInput input) {
+        Household household = new Household();
+        household.setEircode(input.getEircode());
+        household.setNumberOfOccupants(input.getNumberOfOccupants());
+        household.setMaxNumberOfOccupants(input.getMaxNumberOfOccupants());
+        household.setOwnerOccupied(input.isOwnerOccupied());
+
+        return householdService.createHousehold(household);
+    }
+
+    // Mutation: Delete a household by eircode
+    @MutationMapping
+    public Boolean deleteHousehold(@Argument String eircode) {
+        householdService.deleteHouseholdByEircode(eircode);
+        return true;
+    }
+
+    // Mutation: Delete a pet by ID
+    @MutationMapping
+    public Boolean deletePet(@Argument Long id) {
+        petService.deletePetById(id);
+        return true;
     }
 }

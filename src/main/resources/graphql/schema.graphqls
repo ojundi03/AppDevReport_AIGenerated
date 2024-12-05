@@ -42,4 +42,24 @@ type Query {
     statistics: Statistics!
 }
 
-# Mutation Definitions (if needed)
+# Input Types
+
+input HouseholdInput {
+    eircode: String!
+    numberOfOccupants: Int!
+    maxNumberOfOccupants: Int!
+    ownerOccupied: Boolean!
+}
+
+# Mutation Definitions
+
+type Mutation {
+    # Create a new household
+    createHousehold(input: HouseholdInput!): Household!
+
+    # Delete a household by eircode
+    deleteHousehold(eircode: String!): Boolean!
+
+    # Delete a pet by ID
+    deletePet(id: ID!): Boolean!
+}
