@@ -21,7 +21,7 @@ public class Household {
     @Column(name = "owner_occupied", nullable = false)
     private boolean ownerOccupied;
 
-    @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "household", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER) //Updated by O1 due to GRAPHQL
     private List<Pet> pets = new ArrayList<>();
 
     // Getter and Setter for eircode

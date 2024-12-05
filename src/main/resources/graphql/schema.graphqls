@@ -1,0 +1,45 @@
+# Type Definitions
+
+type Household {
+    eircode: String!
+    numberOfOccupants: Int!
+    maxNumberOfOccupants: Int!
+    ownerOccupied: Boolean!
+    pets: [Pet]
+}
+
+type Pet {
+    id: ID!
+    name: String!
+    animalType: String!
+    breed: String!
+    age: Int!
+}
+
+type Statistics {
+    averagePetAge: Float!
+    oldestPetAge: Int!
+    emptyHouseholds: Int!
+    fullHouseholds: Int!
+}
+
+# Query Definitions
+
+type Query {
+    # Get all households
+    allHouseholds: [Household!]!
+
+    # Get a household by eircode
+    household(eircode: String!): Household
+
+    # Get all pets by animal type
+    petsByAnimalType(animalType: String!): [Pet!]!
+
+    # Get a pet by ID
+    pet(id: ID!): Pet
+
+    # Get statistics
+    statistics: Statistics!
+}
+
+# Mutation Definitions (if needed)
