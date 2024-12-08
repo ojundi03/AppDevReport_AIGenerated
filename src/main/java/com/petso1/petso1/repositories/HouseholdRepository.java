@@ -24,6 +24,7 @@ public interface HouseholdRepository extends JpaRepository<Household, String> {
     Optional<Household> findByEircode(String eircode);
 
     List<Household> findByOwnerOccupiedTrue();
+
     // 10. Get Household Statistics
     @Query("SELECT COUNT(h) FROM Household h WHERE h.numberOfOccupants = 0")
     Long countEmptyHouses();

@@ -4,6 +4,7 @@ import com.petso1.petso1.entities.Pet;
 import com.petso1.petso1.exceptions.InvalidDataException;
 import com.petso1.petso1.exceptions.ResourceNotFoundException;
 import com.petso1.petso1.repositories.PetRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -99,5 +100,17 @@ public class PetServiceImpl implements PetService {
     @Override
     public Integer getOldestAge() {
         return petRepository.findMaxAge();
+    }
+
+    @Override
+    @Transactional
+    public Pet changePetName(Long id, String newName) {
+        if (newName == null || newName.trim().isEmpty()) {
+            throw new InvalidDataException("Pet name cannot be null or empty.");
+        }
+
+        Pet pet = getPetById(id);
+        pet.setName(newName);
+        return petRepository.save(pet);
     }
 }

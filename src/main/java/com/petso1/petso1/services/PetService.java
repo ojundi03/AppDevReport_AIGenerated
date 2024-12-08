@@ -35,4 +35,6 @@ public interface PetService {
     // 10. Get Pet Statistics (Average Age, Oldest Age)
     Double getAverageAge();
     Integer getOldestAge();
+
+    Pet changePetName(Long id, String newName);
 }

@@ -1,85 +1,78 @@
 package com.petso1.petso1.controllers;
 
 import com.petso1.petso1.entities.Household;
-import com.petso1.petso1.exceptions.ResourceNotFoundException;
-import com.petso1.petso1.repositories.HouseholdRepository;
 import com.petso1.petso1.services.HouseholdService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/households")
+@Validated
 public class HouseholdController {
 
     private final HouseholdService householdService;
-    private final HouseholdRepository householdRepository;
 
     @Autowired
-    public HouseholdController(HouseholdService householdService, HouseholdRepository householdRepository) {
+    public HouseholdController(HouseholdService householdService) {
         this.householdService = householdService;
-        this.householdRepository = householdRepository;
     }
 
-    @PostMapping
-    public ResponseEntity<Household> createHousehold(@RequestBody Household household) {
-        Household createdHousehold = householdService.createHousehold(household);
-        return new ResponseEntity<>(createdHousehold, HttpStatus.CREATED);
-    }
-
-    // 3. Read Household by ID - Excluding Pets
-    public Household getHouseholdByEircode(String eircode) {
-        return householdRepository.findById(eircode)
-                .orElseThrow(() -> new ResourceNotFoundException("Household not found with eircode " + eircode));
-    }
-    @GetMapping("/{eircode}/with-pets")
-    public ResponseEntity<Household> getHouseholdByEircodeWithPets(@PathVariable String eircode) {
-        Household household = householdService.getHouseholdByEircodeWithPets(eircode);
-        return new ResponseEntity<>(household, HttpStatus.OK);
-    }
+    /**
+     * Get all households - Accessible to anyone
+     * GET /api/households
+     */
     @GetMapping
     public ResponseEntity<List<Household>> getAllHouseholds() {
         List<Household> households = householdService.getAllHouseholds();
         return new ResponseEntity<>(households, HttpStatus.OK);
     }
 
-    @PutMapping("/{eircode}")
-    public ResponseEntity<Household> updateHousehold(@PathVariable String eircode, @RequestBody Household householdDetails) {
-        Household updatedHousehold = householdService.updateHousehold(eircode, householdDetails);
-        return new ResponseEntity<>(updatedHousehold, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{eircode}")
-    public ResponseEntity<?> deleteHousehold(@PathVariable String eircode) {
-        householdService.deleteHouseholdByEircode(eircode);
-        return ResponseEntity.ok().build();
-    }
+    /**
+     * Get households with no pets - Accessible to anyone
+     * GET /api/households/no-pets
+     */
     @GetMapping("/no-pets")
     public ResponseEntity<List<Household>> getHouseholdsWithNoPets() {
         List<Household> households = householdService.getHouseholdsWithNoPets();
         return new ResponseEntity<>(households, HttpStatus.OK);
     }
-    @GetMapping("/owner-occupied")
-    public ResponseEntity<List<Household>> getOwnerOccupiedHouseholds() {
-        List<Household> households = householdService.getOwnerOccupiedHouseholds();
-        return new ResponseEntity<>(households, HttpStatus.OK);
+
+    /**
+     * Get a specific household by Eircode - Accessible to anyone
+     * GET /api/households/{eircode}
+     */
+    @GetMapping("/{eircode}")
+    public ResponseEntity<Household> getHouseholdByEircode(@PathVariable String eircode) {
+        Household household = householdService.getHouseholdByEircode(eircode);
+        return new ResponseEntity<>(household, HttpStatus.OK);
     }
 
-    @GetMapping("/statistics")
-    public ResponseEntity<Map<String, Long>> getHouseholdStatistics() {
-        Long emptyHouses = householdService.getNumberOfEmptyHouses();
-        Long fullHouses = householdService.getNumberOfFullHouses();
-
-        Map<String, Long> statistics = new HashMap<>();
-        statistics.put("emptyHouses", emptyHouses);
-        statistics.put("fullHouses", fullHouses);
-
-        return new ResponseEntity<>(statistics, HttpStatus.OK);
+    /**
+     * Create a new household - Accessible to ADMIN only
+     * POST /api/households
+     */
+    @Secured("ROLE_ADMIN")
+    @PostMapping
+    public ResponseEntity<Household> createHousehold(@Valid @RequestBody Household household) {
+        Household createdHousehold = householdService.createHousehold(household);
+        return new ResponseEntity<>(createdHousehold, HttpStatus.CREATED);
     }
 
+    /**
+     * Delete a household by Eircode - Accessible to ADMIN only
+     * DELETE /api/households/{eircode}
+     */
+    @Secured("ROLE_ADMIN")
+    @DeleteMapping("/{eircode}")
+    public ResponseEntity<Void> deleteHousehold(@PathVariable String eircode) {
+        householdService.deleteHouseholdByEircode(eircode);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

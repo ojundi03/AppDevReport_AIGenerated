@@ -14,6 +14,7 @@ type Pet {
     animalType: String!
     breed: String!
     age: Int!
+    household: Household
 }
 
 type Statistics {
@@ -26,8 +27,13 @@ type Statistics {
 # Query Definitions
 
 type Query {
+    # Get all pets
+    allPets: [Pet!]!
+
     # Get all households
     allHouseholds: [Household!]!
+
+    householdsWithNoPets: [Household!]!
 
     # Get a household by eircode
     household(eircode: String!): Household
@@ -51,15 +57,28 @@ input HouseholdInput {
     ownerOccupied: Boolean!
 }
 
+input PetInput {
+name: String!
+animalType: String!
+breed: String!
+age: Int!
+householdId: Int!
+}
+
+input ChangePetNameInput {
+    id: ID!
+    newName: String!
+}
+
 # Mutation Definitions
 
 type Mutation {
-    # Create a new household
-    createHousehold(input: HouseholdInput!): Household!
-
-    # Delete a household by eircode
-    deleteHousehold(eircode: String!): Boolean!
-
-    # Delete a pet by ID
+    # Pet Mutations
+    createPet(input: PetInput!): Pet!
     deletePet(id: ID!): Boolean!
+    changePetName(input: ChangePetNameInput!): Pet!
+
+    # Household Mutations
+    createHousehold(input: HouseholdInput!): Household!
+    deleteHousehold(eircode: String!): Boolean!
 }
